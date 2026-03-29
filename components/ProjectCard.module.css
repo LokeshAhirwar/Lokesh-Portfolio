@@ -1,0 +1,470 @@
+/* ─── Card ──────────────────────────────────────────────────────── */
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+  cursor: default;
+}
+
+.card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+  transform: translateY(-6px);
+}
+
+/* ─── Image area ────────────────────────────────────────────────── */
+.imageWrap {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--bg-surface);
+  cursor: zoom-in;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  display: block;
+}
+
+.card:hover .image {
+  transform: scale(1.04);
+}
+
+.imageOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to top, var(--bg-card), transparent);
+  pointer-events: none;
+}
+
+/* ─── Zoom hint button ──────────────────────────────────────────── */
+.zoomHint {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
+  pointer-events: none;
+}
+
+.imageWrap:hover .zoomHint {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.zoomHint:hover {
+  background: var(--accent);
+  color: #0A0A0F;
+  border-color: var(--accent);
+}
+
+/* ─── Carousel controls ─────────────────────────────────────────── */
+.carouselBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  cursor: pointer;
+  transition: all var(--transition);
+  opacity: 0;
+}
+
+.imageWrap:hover .carouselBtn {
+  opacity: 1;
+}
+
+.carouselBtn:hover {
+  background: var(--accent);
+  color: #0A0A0F;
+  border-color: var(--accent);
+}
+
+.carouselBtnLeft  { left: 10px; }
+.carouselBtnRight { right: 10px; }
+
+/* ─── Dots ──────────────────────────────────────────────────────── */
+.dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition);
+  padding: 0;
+}
+
+.dotActive {
+  background: var(--accent);
+  width: 18px;
+  border-radius: 3px;
+}
+
+/* ─── Body ──────────────────────────────────────────────────────── */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  flex: 1;
+}
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.shortDesc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 3px 9px;
+}
+
+/* ─── Expandable description ────────────────────────────────────── */
+/*
+  Uses grid-template-rows: 0fr → 1fr trick.
+  This is the only CSS-only expand animation that is
+  100% isolated — it NEVER causes layout reflow on sibling
+  elements, so other cards are completely unaffected.
+*/
+.expandSection {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.42s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.32s ease;
+}
+
+.expandSection.expanded {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+/*
+  The direct child of the grid item MUST have overflow:hidden
+  for the 0fr trick to clip the content when collapsed.
+  We use descriptionInner for this, which also serves as
+  the scroll container when the content is tall.
+*/
+.descriptionInner {
+  overflow: hidden;          /* required for 0fr clipping    */
+  min-height: 0;             /* required for 0fr to collapse */
+
+  /* When expanded, allow internal scroll if text is very long */
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  /* Custom scrollbar inside description */
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+/* Only enable internal scroll when the section is open */
+.expandSection:not(.expanded) .descriptionInner {
+  overflow-y: hidden;
+}
+
+.descriptionInner::-webkit-scrollbar {
+  width: 4px;
+}
+
+.descriptionInner::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.descriptionInner::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.description {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  padding: 4px 0 8px;
+}
+
+/* ─── Footer ────────────────────────────────────────────────────── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.expandBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: 'Inter', sans-serif;
+}
+
+.expandBtn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.expandBtnActive {
+  color: var(--accent);
+  border-color: rgba(61, 220, 132, 0.35);
+  background: var(--accent-dim);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LIGHTBOX
+═══════════════════════════════════════════════════════════════════ */
+.lightboxBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 10, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  padding: 24px;
+}
+
+.lightboxVisible {
+  opacity: 1;
+}
+
+/* Close button */
+.lightboxClose {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.lightboxClose:hover {
+  background: var(--accent);
+  color: #0A0A0F;
+  border-color: var(--accent);
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* Counter */
+.lightboxCounter {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.06em;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Image area */
+.lightboxContent {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1000px;
+  gap: 12px;
+}
+
+.lightboxImageWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255,255,255,0.06);
+  animation: lightboxImageIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes lightboxImageIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.lightboxImage {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 160px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Nav arrows */
+.lightboxNav {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.lightboxNav:hover {
+  background: var(--accent);
+  color: #0A0A0F;
+  border-color: var(--accent);
+  transform: scale(1.1);
+}
+
+.lightboxNavLeft  { order: -1; }
+.lightboxNavRight { order: 1; }
+
+/* Dots */
+.lightboxDots {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.lightboxDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.lightboxDotActive {
+  background: var(--accent);
+  width: 22px;
+  border-radius: 4px;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .lightboxNav {
+    width: 36px;
+    height: 36px;
+  }
+
+  .lightboxContent {
+    gap: 6px;
+  }
+
+  .lightboxImage {
+    max-height: calc(100vh - 140px);
+  }
+}
