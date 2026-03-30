@@ -36,7 +36,9 @@ export default function SkillCard({ skill }: Props) {
       style={{ '--skill-color': color } as React.CSSProperties}
     >
       {skill.icon ? (
-        <span className={styles.icon} dangerouslySetInnerHTML={{ __html: skill.icon }} />
+        <span className={styles.icon}>
+          <img src={skill.icon} alt={`${skill.name} icon`} />
+        </span>
       ) : (
         <span className={styles.iconFallback}>
           {skill.name.substring(0, 2).toUpperCase()}
