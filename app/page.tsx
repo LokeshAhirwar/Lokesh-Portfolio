@@ -14,7 +14,7 @@ import styles from './page.module.css';
 
 
 const RESUME_URL =
-  'https://vyiqqjwaervuwdooalmt.supabase.co/storage/v1/object/sign/portfolio-assets/Lokesh_Resume.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xMWJjNWNmMS1kNzBkLTQ1ZjEtODk3MS05ZmMxM2Y3Y2Y3ZWQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwb3J0Zm9saW8tYXNzZXRzL0xva2VzaF9SZXN1bWUucGRmIiwiaWF0IjoxNzc0NTE2NzYzLCJleHAiOjE4NjkxMjQ3NjN9.VOGzLhENq7aoucZf2i_Kc5jGQmSF7molnoDwaaRSED0';
+  'https://vyiqqjwaervuwdooalmt.supabase.co/storage/v1/object/sign/portfolio-assets/Lokesh%20Experienced.pdf?token=eyJraWQiOiIxMWJjNWNmMS1kNzBkLTQ1ZjEtODk3MS05ZmMxM2Y3Y2Y3ZWQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwb3J0Zm9saW8tYXNzZXRzL0xva2VzaCBFeHBlcmllbmNlZC5wZGYiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzg4MDE2MjQ1LCJleHAiOjE4ODI2MjQyNDV9.yXveaz6btHJlW6VxJuTa32OjgL-aCgJ2qBYAG63vfYc';
 
 const TYPEWRITER_TEXTS = [
   'Native Android Developer',
