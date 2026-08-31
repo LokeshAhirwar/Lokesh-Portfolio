@@ -40,3 +40,21 @@ export interface Message {
   subject: string;
   message: string;
 }
+
+export interface Experience {
+  id: string;
+  role: string;
+  company: string;
+  location?: string | null;
+  employment_type?: string | null; // e.g. 'Trainee', 'Internship', 'Leadership', 'Full-time'
+  category?: 'work' | 'leadership' | string;
+  start_date: string;
+  end_date?: string | null;
+  description: string[] | string;
+  tech_stack?: string | null;
+  company_url?: string | null;
+  logo_url?: string | null;
+  sort_order: number;
+  created_at?: string;
+}
+

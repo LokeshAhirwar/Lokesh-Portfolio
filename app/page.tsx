@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion, useInView, useAnimationFrame } from 'framer-motion';
 import { Download, ArrowRight, Phone, Mail, ChevronDown } from 'lucide-react';
-import { getFeaturedProjects, getSkills, getLatestCertifications } from '../lib/queries';
-import { Project, Skill, Certification } from '../lib/types';
+import { getFeaturedProjects, getSkills, getLatestCertifications, getExperiences } from '../lib/queries';
+import { Project, Skill, Certification, Experience } from '../lib/types';
 import ProjectCard from '../components/ProjectCard';
+import ExperienceCard from '../components/ExperienceCard';
 import { SkillsGroup } from '../components/SkillCard';
 import CertificationCard from '../components/CertificationCard';
 import SectionHeader from '../components/SectionHeader';
@@ -62,7 +63,7 @@ function TypewriterText() {
 
 const BADGES = [
   { label: 'Android Dev', emoji: '🤖', offset: 0 },
-  { label: '7.1 CGPA',    emoji: '🎓', offset: (2 * Math.PI) / 3 },
+  { label: '7.22 CGPA',   emoji: '🎓', offset: (2 * Math.PI) / 3 },
   { label: 'GDG Lead',    emoji: '👥', offset: (4 * Math.PI) / 3 },
 ];
 
@@ -120,18 +121,22 @@ export default function HomePage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [certs, setCerts] = useState<Certification[]>([]);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
 
   useEffect(() => {
     getFeaturedProjects().then(setProjects);
     getSkills().then(setSkills);
     getLatestCertifications().then(setCerts);
+    getExperiences().then(setExperiences);
   }, []);
 
   const projectsRef = useRef(null);
+  const expRef = useRef(null);
   const skillsRef = useRef(null);
   const certsRef = useRef(null);
 
   const projectsInView = useInView(projectsRef, { once: true, margin: '-100px' });
+  const expInView = useInView(expRef, { once: true, margin: '-100px' });
   const skillsInView = useInView(skillsRef, { once: true, margin: '-100px' });
   const certsInView = useInView(certsRef, { once: true, margin: '-100px' });
 
@@ -283,6 +288,43 @@ export default function HomePage() {
               </Link>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* ─── Experience Section ──────────────────────────────────── */}
+      <section className="section" id="experience" ref={expRef}>
+        <div className="container">
+          <SectionHeader
+            label="// Career Journey"
+            title="Experience & Leadership"
+            subtitle="My professional work as an Android Developer & community leadership."
+          />
+
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={expInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            style={{ maxWidth: '860px', margin: '0 auto' }}
+          >
+            {experiences.length === 0 ? (
+              <div className={styles.emptyState}>
+                <p>No experiences found. Add some in your Supabase dashboard!</p>
+              </div>
+            ) : (
+              experiences.map((exp, index) => (
+                <ExperienceCard key={exp.id} experience={exp} index={index} />
+              ))
+            )}
+
+            {experiences.length > 0 && (
+              <div className={styles.sectionCta}>
+                <Link href="/experience" className="btn btn-ghost" id="home-all-exp-btn">
+                  View Full Experience Journey
+                  <ArrowRight size={17} />
+                </Link>
+              </div>
+            )}
+          </motion.div>
         </div>
       </section>
 

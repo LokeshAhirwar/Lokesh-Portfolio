@@ -1,17 +1,19 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
-import { GraduationCap, Users, Award, MapPin } from 'lucide-react';
-import { getSkills, getCertifications } from '../../lib/queries';
-import { Skill, Certification } from '../../lib/types';
+import { GraduationCap, Users, Award, MapPin, ArrowRight } from 'lucide-react';
+import { getSkills, getCertifications, getExperiences } from '../../lib/queries';
+import { Skill, Certification, Experience } from '../../lib/types';
 import { SkillsGroup } from '../../components/SkillCard';
 import CertificationCard from '../../components/CertificationCard';
+import ExperienceCard from '../../components/ExperienceCard';
 import SectionHeader from '../../components/SectionHeader';
 import styles from './about.module.css';
 
 const STATS = [
-  { icon: GraduationCap, label: 'CGPA', value: '7.1', sub: 'B.Tech CSE' },
+  { icon: GraduationCap, label: 'CGPA', value: '7.22', sub: 'B.Tech CSE' },
   { icon: Users, label: 'Community', value: 'GDG', sub: 'Android Lead' },
   { icon: Award, label: 'Year', value: '2026', sub: 'Expected Grad.' },
   { icon: MapPin, label: 'Based In', value: 'Bhopal', sub: 'India' },
@@ -20,14 +22,18 @@ const STATS = [
 export default function AboutPage() {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [certs, setCerts] = useState<Certification[]>([]);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
 
   useEffect(() => {
     getSkills().then(setSkills);
     getCertifications().then(setCerts);
+    getExperiences().then(setExperiences);
   }, []);
 
+  const expRef = useRef(null);
   const skillsRef = useRef(null);
   const certsRef = useRef(null);
+  const expInView = useInView(expRef, { once: true, margin: '-80px' });
   const skillsInView = useInView(skillsRef, { once: true, margin: '-80px' });
   const certsInView = useInView(certsRef, { once: true, margin: '-80px' });
 
@@ -54,7 +60,7 @@ export default function AboutPage() {
                 <p>
                   I&apos;m <strong>Lokesh Ahirwar</strong>, a passionate Native Android Developer
                   pursuing B.Tech in Computer Science & Engineering at{' '}
-                  <strong>SIST Bhopal</strong> (2022–2026) with a CGPA of 7.1.
+                  <strong>SIST Bhopal</strong> (2022–2026) with a CGPA of 7.22.
                 </p>
                 <p>
                   As the <strong>GDG Android Lead</strong>, I organize developer meetups,
@@ -104,12 +110,46 @@ export default function AboutPage() {
                   <p className={styles.eduDeg}>
                     B.Tech — Computer Science & Engineering
                   </p>
-                  <p className={styles.eduMeta}>2022 – 2026 &nbsp;•&nbsp; CGPA: 7.1</p>
+                  <p className={styles.eduMeta}>2022 – 2026 &nbsp;•&nbsp; CGPA: 7.22</p>
                   <p className={styles.eduMeta}>Bhopal, Madhya Pradesh, India</p>
                 </div>
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* ─── Experience Section ──────────────────────────────────── */}
+      <section className="section" id="experience" ref={expRef}>
+        <div className="container">
+          <SectionHeader
+            label="// Work & Leadership"
+            title="Experience"
+            subtitle="Industry roles, software engineering, and developer community leadership."
+          />
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={expInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            style={{ maxWidth: '860px', margin: '0 auto' }}
+          >
+            {experiences.length === 0 ? (
+              <p className={styles.empty}>Experiences loading or not added yet.</p>
+            ) : (
+              experiences.map((exp, index) => (
+                <ExperienceCard key={exp.id} experience={exp} index={index} />
+              ))
+            )}
+
+            {experiences.length > 0 && (
+              <div style={{ textAlign: 'center', marginTop: '32px' }}>
+                <Link href="/experience" className="btn btn-ghost" id="about-all-exp-btn">
+                  View Full Career Timeline
+                  <ArrowRight size={17} />
+                </Link>
+              </div>
+            )}
+          </motion.div>
         </div>
       </section>
 

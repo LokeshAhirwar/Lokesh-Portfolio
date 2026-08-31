@@ -11,7 +11,10 @@ async function test() {
 
   const skills = await supabase.from('skills').select('*');
   console.log('Skills Data:', skills.data);
-  if (skills.error) console.log('Skills Error:', skills.error);
+  const exp = await supabase.from('experiences').select('*');
+  console.log('Experiences Count:', exp.data ? exp.data.length : 0);
+  console.log('Experiences Data:', exp.data);
+  if (exp.error) console.log('Experiences Error:', exp.error);
 }
 
 test();
